@@ -1,0 +1,30 @@
+<%- include('head'); -%>
+    <main>
+        <div class="container">
+            <h2>Items List</h2>
+            <ul class="list-group">
+                <% items.forEach(function(item) { %>
+                    <li class="list-group-item">
+                        <div>
+                            <h3>
+                                <%= item.title %>
+                            </h3>
+                            <p>
+                                <%= item.description %>
+                            </p>
+                            <small>Created on: <%= item.dataCreation ? item.dataCreation.toDateString() : 'Unknown' %>
+                                    by <%= item.createdBy ? item.createdBy.displayName : 'Unknown' %></small>
+                        </div>
+                        <br>
+                        <form action="/items/<%= item._id %>/edit" method="get" style="display: inline-block;">
+                            <button type="submit" class="btn btn-primary">Edit</button>
+                        </form>
+                        <form action="/items/<%= item._id %>/delete" method="post" style="display: inline-block;">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </li>
+                    <% }); %>
+            </ul>
+        </div>
+    </main>
+    <%- include('foot'); -%>
