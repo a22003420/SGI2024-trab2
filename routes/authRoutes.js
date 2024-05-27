@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
             dateStyle: 'full',
             timeStyle: 'long'
         }).format(new Date());
-        res.render('app', {
+        res.render('index', {
             date_tag: date,
             message_tag: 'Access your Google Account',
         });
