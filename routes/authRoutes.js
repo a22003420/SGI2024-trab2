@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
         }).format(new Date());
         res.render('index', {
             date_tag: date,
-            message_tag: 'Access your Google Account',
+            message_tag: 'Choose an option below to continue.',
         });
     }
 });

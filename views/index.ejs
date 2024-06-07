@@ -1,11 +1,15 @@
 <%- include('head'); -%>
+
 <main>
     <div class="jumbotron">
-        <p class="lead">Access your Google Profile</p>
+        <p class="lead">Access your Profile</p>
         <hr class="my-4">
         <p>Current Date: <%= date_tag %></p>
         <p><%= message_tag %></p>
-        <a class="btn btn-primary" href="/login" role="button"><span class="fa fa-google"></span> Login</a>
+        <div>
+            <a class="btn btn-primary" href="/login" role="button"><span class="fa fa-google"></span> Login with Google</a>
+            <a class="btn btn-secondary" href="/passport-auth" role="button"><span class="fa fa-key"></span> WebAuthn Authentication</a>
+        </div>
     </div>
 </main>
 <%- include('foot'); -%>
