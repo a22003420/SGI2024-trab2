@@ -1,7 +1,3 @@
-## Trabalho 2 - João Matos
+## Trabalho 3 - João Matos
 
-Google OAuth2 authentication example, using passport and express, based on a LoginRadius sample, with several modifications:
-- Completely restructured the code;
-- Added several new routes;
-- Added TLS support (needs certificate and private key).
-- Added session store on MongoDB.
+Google and WebAuthn Authentication.
