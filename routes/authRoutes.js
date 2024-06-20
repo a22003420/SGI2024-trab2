@@ -3,6 +3,15 @@ const router = require('express').Router();
 const { isAuth, isNotAuth } = require('../services/middleware');
 const Item = require('../models/Item');
 
+
+var WebAuthnStrategy = require('passport-fido2-webauthn');
+var SessionChallengeStore = require('passport-fido2-webauthn').SessionChallengeStore;
+var base64url = require('base64url');
+var uuid = require('uuid').v4;
+
+
+var store = new SessionChallengeStore();
+
 // Home page route
 router.get('/', (req, res) => {
     if (req.isAuthenticated()) {
@@ -197,5 +206,70 @@ router.get('/auth/google/callback', passport.authenticate('google', {
     delete req.session.returnTo;
     res.redirect(returnTo || '/success');
 });
+
+// start of webauthn routes 
+
+router.get('/passport-auth', function(req, res, next) {
+    res.render('login');
+  });
+
+
+router.post('/passport-auth/public-key', passport.authenticate('webauthn', {
+    failureMessage: true,
+    failWithError: true
+  }), function(req, res, next) {
+    res.json({ ok: true, location: '/' });
+  }, function(err, req, res, next) {
+    var cxx = Math.floor(err.status / 100);
+    if (cxx != 4) { return next(err); }
+    res.json({ ok: false, location: '/passport-auth' });
+  });
+  
+  router.post('/passport-auth/public-key/challenge', function(req, res, next) {
+    store.challenge(req, function(err, challenge) {
+      if (err) { return next(err); }
+      res.json({ challenge: base64url.encode(challenge) });
+    });
+  });
+
+  router.get('/signup', function(req, res, next) {
+    res.render('signup');
+  });
+  
+  router.post('/signup/public-key/challenge', async function(req, res, next) {
+    try {
+      console.log("signup challenge");
+      var handle = Buffer.alloc(16);
+      handle = uuid({}, handle);
+      console.log("handle:", handle);
+      var user = {
+        id: handle,
+        name: req.body.name,
+        displayName: req.body.name
+      };
+
+      // console.log(req.body.name)
+      console.log(req.body)
+      console.log("user:", user);
+      // Simula uma operação assíncrona com uma promise
+      var challenge = await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          // Força um erro de exemplo
+          reject(new Error('Erro simulado'));
+        }, 1000);
+      });
+  
+      // Encode o ID e o desafio em base64url
+      user.id = base64url.encode(user.id);
+      var encodedChallenge = base64url.encode(challenge);
+  
+      // Envia a resposta JSON com o usuário e o desafio codificado
+      res.json({ user: user, challenge: encodedChallenge });
+    } catch (err) {
+      // Se ocorrer um erro, captura o erro e passa para o próximo handler de erro (next)
+      next(err);
+    }
+  });
+  
 
 module.exports = router;

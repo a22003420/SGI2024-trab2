@@ -1,0 +1,21 @@
+<%- include('head'); -%>
+<main class="main-content">
+    <section class="prompt">
+        <h1 class="signup-title">Sign up</h1>
+        <form action="/signup/public-key/challenge" method="post" class="signup-form">
+            <div class="form-group">
+                <label for="name" class="form-label">Name</label>
+                <input id="name" name="name" type="text" required class="form-input">
+            </div>
+            <div class="form-group">
+                <label for="username" class="form-label">Username</label>
+                <input id="username" name="username" type="text" autocomplete="username" required class="form-input">
+            </div>
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <button type="submit" class="btn btn-primary">Sign up</button>
+        </form>
+        <hr class="divider">
+        <p class="help-text">Already have an account? <a href="/passport-auth" class="login-link">Sign in</a></p>
+    </section>
+</main>
+<%- include('foot'); -%>

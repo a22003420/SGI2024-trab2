@@ -1,9 +1,16 @@
+
+var WebAuthnStrategy = require('passport-fido2-webauthn');
+var SessionChallengeStore = require('passport-fido2-webauthn').SessionChallengeStore;
+
+var db = require('../db');
+
 // Get the configuration values
 require('dotenv').config();
 const User = require('../models/User');
 
 const passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth2').Strategy;
+var store = new SessionChallengeStore();
 
 /*
  * After a successful authentication, store the user id in the session
@@ -72,3 +79,42 @@ function expiryDate(seconds) {
     // return Intl.DateTimeFormat('en-GB', { dateStyle: 'long', timeStyle: 'long' }).format(date);
     return date.toLocaleString('en-GB', { dateStyle: 'long', timeStyle: 'long' });
 }
+
+
+
+passport.use(new WebAuthnStrategy({ store: store }, function verify(id, userHandle, cb) {
+  db.get('SELECT * FROM public_key_credentials WHERE external_id = ?', [ id ], function(err, row) {
+    if (err) { return cb(err); }
+    if (!row) { return cb(null, false, { message: 'Invalid key. '}); }
+    var publicKey = row.public_key;
+    db.get('SELECT * FROM users WHERE rowid = ?', [ row.user_id ], function(err, row) {
+      if (err) { return cb(err); }
+      if (!row) { return cb(null, false, { message: 'Invalid key. '}); }
+      if (Buffer.compare(row.handle, userHandle) != 0) {
+        return cb(null, false, { message: 'Invalid key. '});
+      }
+      return cb(null, row, publicKey);
+    });
+  });
+}, function register(user, id, publicKey, cb) {
+  db.run('INSERT INTO users (username, name, handle) VALUES (?, ?, ?)', [
+    user.name,
+    user.displayName,
+    user.id
+  ], function(err) {
+    if (err) { return cb(err); }
+    var newUser = {
+      id: this.lastID,
+      username: user.name,
+      name: user.displayName
+    };
+    db.run('INSERT INTO public_key_credentials (user_id, external_id, public_key) VALUES (?, ?, ?)', [
+      newUser.id,
+      id,
+      publicKey
+    ], function(err) {
+      if (err) { return cb(err); }
+      return cb(null, newUser);
+    });
+  });
+}));
