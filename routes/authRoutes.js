@@ -263,7 +263,7 @@ router.post('/passport-auth/public-key', passport.authenticate('webauthn', {
       user.id = base64url.encode(user.id);
       var encodedChallenge = base64url.encode(challenge);
   
-      // Envia a resposta JSON com o usuário e o desafio codificado
+      // Envia a resposta JSON com o user e o desafio codificado
       res.json({ user: user, challenge: encodedChallenge });
     } catch (err) {
       // Se ocorrer um erro, captura o erro e passa para o próximo handler de erro (next)

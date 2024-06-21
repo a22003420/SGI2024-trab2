@@ -1,6 +1,6 @@
 window.addEventListener('load', function() {
   
-  document.querySelector('form').addEventListener('submit', function(event) {
+  document.querySelector('.signup-form').addEventListener('submit', function(event) {
     if (!window.PublicKeyCredential) { return; }
     
     event.preventDefault();
@@ -8,9 +8,13 @@ window.addEventListener('load', function() {
     return fetch('/signup/public-key/challenge', {
       method: 'POST',
       headers: {
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
       },
-      body: new FormData(event.target),
+      body: JSON.stringify({
+        email: event.target.name.value,
+        displayName: event.target.username.value
+      }),
     })
     .then(function(response) {
       return response.json();
