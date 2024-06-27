@@ -7,7 +7,7 @@ async function dbConnect() {
     try {
         mongoose.set('strictQuery', false);
         await mongoose.connect(dbString);
-        console.log('Connected to MongoDB');
+        console.log('Connected to MongoDB from User');
     } catch (err) {
         console.error(err);
     }

@@ -1,7 +1,13 @@
+const Credential = require('../models/Credentials');
+const WebAuthnStrategy = require('passport-fido2-webauthn');
 
-var WebAuthnStrategy = require('passport-fido2-webauthn');
+// Get the configuration values
 
 
+
+const SessionChallengeStore = WebAuthnStrategy.SessionChallengeStore;
+const store = new SessionChallengeStore();
+const base64url = require('base64url');
 
 var db = require('../db');
 const test = require('../services/store');
@@ -84,93 +90,56 @@ function expiryDate(seconds) {
 }
 
 // WebAuthn Strategy
-passport.use(new WebAuthnStrategy(
-  {
-    store: store
-  },
-  // Verify callback
-  async (id, userHandle, cb) => {
-    try {
-      let cred = await Credential.findOne({
-        external_id: id
-      });
-      if (!cred) {
-        return cb(null, false, { message: 'Invalid key. ' });
+passport.use(
+  new WebAuthnStrategy(
+    {
+      store: store
+    },
+    // Verify callback
+    async (id, userHandle, cb) => {
+      try {
+        let cred = await Credential.findOne({ external_id: id });
+        if (!cred) {
+          return cb(null, false, { message: 'Invalid key.' });
+        }
+        let user = await User.findOne({ googleId: cred.googleId });
+        if (!user) {
+          return cb(null, false, { message: 'Invalid user.' });
+        } else if (Buffer.compare(user.handle, userHandle) !== 0) {
+          return cb(null, false, { message: 'Invalid handle.' });
+        }
+        return cb(null, user, cred.publicKey);
+      } catch (err) {
+        cb(err);
       }
-      const googleId = cred.googleId;
-      const publicKey = cred.publicKey;
-      let user = await User.findOne({ googleId: googleId });
-      if (!user) {
-        return cb(null, false, { message: 'Invalid user. ' });
-      } else if (Buffer.compare(user.handle, userHandle) != 0) {
-        return cb(null, false, { message: 'Invalid handle. ' });
+    },
+
+    async function register(user, external_id, publicKey, cb) {
+      try {
+        let foundUser = await User.findOne({ googleId: user.name });
+        if (!foundUser) {
+          return cb(null, false, { message: 'Invalid user.' });
+        }
+        foundUser.handle = foundUser.id;
+        await foundUser.save();
+
+        let cred = await Credential.findOne({ googleId: foundUser.googleId });
+        if (cred) {
+          cred.external_id = external_id;
+          cred.publicKey = publicKey;
+          await cred.save();
+        } else {
+          await new Credential({
+            googleId: foundUser.googleId,
+            external_id: external_id,
+            publicKey: publicKey
+          }).save();
+        }
+        return cb(null, foundUser);
+      } catch (err) {
+        console.error(err);
+        return cb(err);
       }
-      return cb(null, user, publicKey);
-    } catch (err) {
-      console.error(err);
     }
-    // db.get('SELECT * FROM public_key_credentials WHERE external_id = ?', [ id ], function(err, row) {
-    //   if (err) { return cb(err); }
-    //   if (!row) { return cb(null, false, { message: 'Invalid key. '}); }
-    //   var publicKey = row.public_key;
-    //   db.get('SELECT * FROM users WHERE rowid = ?', [ row.user_id ], function(err, row) {
-    //     if (err) { return cb(err); }
-    //     if (!row) { return cb(null, false, { message: 'Invalid key. '}); }
-    //     if (Buffer.compare(row.handle, userHandle) != 0) {
-    //       return cb(null, false, { message: 'Invalid key. '});
-    //     }
-    //     return cb(null, row, publicKey);
-    //   });
-    // });
-  },
-
-  async function register(user, external_id, publicKey, cb) {
-    try {
-      let user = User.findOne({ googleId: user.name });
-      if (!user) {
-        return cb(null, { message: 'Invalid user. ' });
-      }
-      user.handle = user.id;
-      await user.save();
-    } catch (err) {
-      console.error(err);
-    }
-
-  }
- let cred = await Credential.findOne({
-      googleId: googleId
-    });
-    if (cred) {
-      cred.external_id = external_id;
-      cred.publicKey = publicKey;
-      await cred.save();
-    } else {
-      await new Credential({
-        googleId: googleId,
-        external_id: external_id,
-        publicKey: publicKey
-      }).save();
-    }
-
-
-    // db.run('INSERT INTO users (username, name, handle) VALUES (?, ?, ?)', [
-    //   user.name,
-    //   user.displayName,
-    //   user.id
-    // ], function (err) {
-    //   if (err) { return cb(err); }
-    //   var newUser = {
-    //     id: this.lastID,
-    //     username: user.name,
-    //     name: user.displayName
-    //   };
-    //   db.run('INSERT INTO public_key_credentials (user_id, external_id, public_key) VALUES (?, ?, ?)', [
-    //     newUser.id,
-    //     id,
-    //     publicKey
-    //   ], function (err) {
-    //     if (err) { return cb(err); }
-    //     return cb(null, newUser);
-    //   });
-    // });
-  }));
+  )
+);
