@@ -20,7 +20,8 @@ const userSchema = new mongoose.Schema({
     displayName: String,
     email: String,
     accessToken: String,
-    expiryDate: String
+    expiryDate: String,
+    handle: Buffer,
 });
 
 const User = mongoose.model('googleusers', userSchema);

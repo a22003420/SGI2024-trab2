@@ -2,6 +2,7 @@
 require('dotenv').config();
 const express = require('express');
 const app = express();
+var multer  = require('multer');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const path = require('path');
@@ -9,7 +10,8 @@ const bodyParser = require('body-parser');
 var SQLiteStore = require('connect-sqlite3')(session);
 const passport = require('passport');
 app.use(express.static(path.join(__dirname, 'services')));
-
+app.use(express.urlencoded({ extended: false }));
+app.use(multer().none());
 
 
 const { createServer } = require('./services/server');
@@ -62,6 +64,20 @@ app.use(function(req, res, next) {
 });
 
 // Middleware to add CSRF token to all views
+
+app.use(function(req, res, next) {
+  //res.locals.csrfToken = req.csrfToken();
+  res.locals.csrfToken = 'TODO';
+  next();
+});
+
+app.use(function(req, res, next) {
+  var msgs = req.session.messages || [];
+  res.locals.messages = msgs;
+  res.locals.hasMessages = !! msgs.length;
+  req.session.messages = [];
+  next();
+});
 
 app.use(function(req, res, next) {
   //res.locals.csrfToken = req.csrfToken();

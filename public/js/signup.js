@@ -1,11 +1,14 @@
 window.addEventListener('load', function() {
-  
-  document.querySelector('.signup-form').addEventListener('submit', function(event) {
+  const signUpForm = document.querySelector('.js-signup_form');
+
+  if (!signUpForm) { return; }
+
+  signUpForm.addEventListener('submit', function(event) {
     if (!window.PublicKeyCredential) { return; }
     
     event.preventDefault();
     
-    return fetch('/signup/public-key/challenge', {
+    return fetch('/signup/public-key/challenge', { // check here
       method: 'POST',
       headers: {
         'Accept': 'application/json',

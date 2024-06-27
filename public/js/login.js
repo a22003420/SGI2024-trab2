@@ -1,6 +1,9 @@
 window.addEventListener('load', function() {
-  
-  document.getElementById('siw-public-key').addEventListener('click', function(event) {
+  const touchIdButton = document.getElementById('siw-public-key');
+
+  if (!touchIdButton) { return; }
+
+ touchIdButton.addEventListener('click', function(event) {
     if (!window.PublicKeyCredential) {
       alert('Passkeys are not supported by this browser');
       return;
