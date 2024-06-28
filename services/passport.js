@@ -1,4 +1,10 @@
-const Credential = require('../models/Credentials');
+require('dotenv').config();
+const User = require('../models/User');
+const store = require('../services/store');
+const passport = require('passport');
+var GoogleStrategy = require('passport-google-oauth2').Strategy;
+
+const Credentials = require('../models/Credentials');
 const WebAuthnStrategy = require('passport-fido2-webauthn');
 
 // Get the configuration values
@@ -6,21 +12,12 @@ const WebAuthnStrategy = require('passport-fido2-webauthn');
 
 
 const SessionChallengeStore = WebAuthnStrategy.SessionChallengeStore;
-const store = new SessionChallengeStore();
+
 const base64url = require('base64url');
 
-var db = require('../db');
-const test = require('../services/store');
-
-// Get the configuration values
-require('dotenv').config();
-const User = require('../models/User');
-
-const passport = require('passport');
-var GoogleStrategy = require('passport-google-oauth2').Strategy;
-
-
-
+//var db = require('../db');
+//const test = require('../services/store');
+//const base64url = require('base64url');
 /*
  * After a successful authentication, store the user id in the session
  * as req.session.passport.user so that it persists across accesses.
@@ -98,7 +95,7 @@ passport.use(
     // Verify callback
     async (id, userHandle, cb) => {
       try {
-        let cred = await Credential.findOne({ external_id: id });
+        let cred = await Credentials.findOne({ external_id: id });
         if (!cred) {
           return cb(null, false, { message: 'Invalid key.' });
         }
@@ -115,22 +112,28 @@ passport.use(
     },
 
     async function register(user, external_id, publicKey, cb) {
+      console.log('Registering user:', user);
+      console.log('External ID:', external_id);
+      console.log('Public Key:', publicKey);
+      
       try {
         let foundUser = await User.findOne({ googleId: user.name });
+        
         if (!foundUser) {
           return cb(null, false, { message: 'Invalid user.' });
         }
+        console.log('Found user:', foundUser);
         foundUser.handle = foundUser.id;
         await foundUser.save();
 
-        let cred = await Credential.findOne({ googleId: foundUser.googleId });
+        let cred = await Credentials.findOne({ googleId: foundUser.googleId });
         if (cred) {
           cred.external_id = external_id;
           cred.publicKey = publicKey;
           await cred.save();
         } else {
-          await new Credential({
-            googleId: foundUser.googleId,
+          await new Credentials({
+            googleId: user.username,
             external_id: external_id,
             publicKey: publicKey
           }).save();

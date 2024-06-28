@@ -1,30 +1,28 @@
-window.addEventListener('load', function() {
-  const signUpForm = document.querySelector('.js-signup_form');
-
-  if (!signUpForm) { return; }
-
-  signUpForm.addEventListener('submit', function(event) {
+window.addEventListener('DOMContentLoaded', function() {
+  
+  document.querySelector('form').addEventListener('submit', function(event) {
     if (!window.PublicKeyCredential) { return; }
     
     event.preventDefault();
+    screen.orientation.lock('portrait').catch(function(error) {
+      console.log(error);
+  });
     
-    return fetch('/signup/public-key/challenge', { // check here
+    fetch('/signup/public-key/challenge', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        email: event.target.name.value,
-        displayName: event.target.username.value
-      }),
+      body: JSON.stringify(Object.fromEntries(new FormData(event.target))),
     })
-    .then(function(response) {
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Erro na solicitação: ' + response.status);
+      }
       return response.json();
     })
-    .then(function(json) {
-      // https://chromium.googlesource.com/chromium/src/+/master/content/browser/webauth/uv_preferred.md
-      // https://chromium.googlesource.com/chromium/src/+/main/content/browser/webauth/pub_key_cred_params.md
+    .then(json => {
       return navigator.credentials.create({
         publicKey: {
           rp: {
@@ -37,29 +35,16 @@ window.addEventListener('load', function() {
           },
           challenge: base64url.decode(json.challenge),
           pubKeyCredParams: [
-            {
-              type: 'public-key',
-              alg: -7 // ES256
-            },
-            {
-              type: 'public-key',
-              alg: -257 // RS256
-            }
+            { type: 'public-key', alg: -7 }, // ES256
+            { type: 'public-key', alg: -257 } // RS256
           ],
-          //attestation: 'none',
           authenticatorSelection: {
-            //authenticatorAttachment: 'platform', // "platform" | "cross-platform"
-            //residentKey: 'discouraged', // "discouraged" | "preferred" | "required"
-            //requireResidentKey: false, // true | false (default)
-            userVerification: 'preferred', // "required" | "preferred" (default) | "discouraged"
-          },
-          //extensions: {
-          //  credProps: true
-          //}
+            userVerification: 'preferred' // Preferência por verificação de usuário
+          }
         }
       });
     })
-    .then(function(credential) {
+    .then(credential => {
       var body = {
         response: {
           clientDataJSON: base64url.encode(credential.response.clientDataJSON),
@@ -70,7 +55,7 @@ window.addEventListener('load', function() {
         body.response.transports = credential.response.getTransports();
       }
       
-      return fetch('/passport-auth/public-key', {
+      return fetch('/login/public-key', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -79,14 +64,14 @@ window.addEventListener('load', function() {
         body: JSON.stringify(body)
       });
     })
-    .then(function(response) {
+    .then(response => {
       return response.json();
     })
-    .then(function(json) {
+    .then(json => {
       window.location.href = json.location;
     })
-    .catch(function(error) {
-      console.log(error);
+    .catch(error => {
+      console.error('Erro:', error);
     });
   });
   

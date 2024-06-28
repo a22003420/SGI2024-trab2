@@ -13,6 +13,16 @@
       </p>
       <p>Email Address: <%= user.email %>
       </p>
+      <% if (!user.passKeyId) { %>
+        <div class="mt-5">
+          <p>
+            Register your passkey using the link below:
+          </p>
+          <p>
+            <a class="btn btn-primary" href="/signup" role="button">Sign Up</a>
+          </p>
+        </div>
+      <% } %>
     </div>
   </main>
   <%- include('foot'); -%>

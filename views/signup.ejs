@@ -1,17 +1,17 @@
 <%- include('head'); -%>
-<script type="text/javascript" src="/js/base64url.js"></script>
-<script type="text/javascript" src="/js/signup.js"></script>
+<script type="text/javascript" src="../js/base64url.js"></script>
+<script type="text/javascript" src="../js/signup.js"></script>
 <main class="main-content">
     <section class="prompt">
         <h1 class="signup-title">Sign up</h1>
-        <form action="/signup/public-key/challenge" method="post" class="signup-form">
+        <form id="signupForm" action="/signup/public-key/challenge" method="post">
             <div class="form-group">
                 <label for="name" class="form-label">Name:</label>
-                <input id="name" name="name" type="text" class="form-input" value="<%= user.displayName =%>" required >
+                <input id="name" name="name" type="text" class="form-input" value="<%= user && user.displayName ? user.displayName : '' %>" required>
             </div>
             <div class="form-group">
                 <label for="username" class="form-label">GoogleID:</label>
-                <input id="username" name="username" type="text" class="form-input" value="<%= user.googleId =%>" required >
+                <input id="username" name="username" type="text" class="form-input" value="<%= user && user.googleId ? user.googleId : '' %>" required>
             </div>
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <button type="submit" class="btn btn-primary">Sign up</button>

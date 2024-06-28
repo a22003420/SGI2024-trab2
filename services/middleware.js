@@ -14,11 +14,5 @@ module.exports = {
             res.redirect('/login');
         }
     },
-    isNotAuth: (req, res, next) => {
-        if (!req.isAuthenticated()) {
-            next();
-        } else {
-            res.redirect('/success');
-        }
-    }
+   
 };

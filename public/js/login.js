@@ -11,7 +11,7 @@ window.addEventListener('load', function() {
     
     event.preventDefault();
     
-    return fetch('/passport-auth/public-key/challenge', {
+    return fetch('/login/public-key/challenge', {
       method: 'POST',
       headers: {
         'Accept': 'application/json'
@@ -41,7 +41,7 @@ window.addEventListener('load', function() {
         body.authenticatorAttachment = credential.authenticatorAttachment;
       }
       
-      return fetch('/passport-auth/public-key', {
+      return fetch('/login/public-key', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,7 +68,7 @@ window.addEventListener('load', function() {
       
       document.getElementById('siw-public-key').remove();
       
-      return fetch('/passport-auth/public-key/challenge', {
+      return fetch('/login/public-key/challenge', {
         method: 'POST',
         headers: {
           'Accept': 'application/json'
@@ -99,13 +99,14 @@ window.addEventListener('load', function() {
           body.authenticatorAttachment = credential.authenticatorAttachment;
         }
     
-        return fetch('/passport-auth/public-key', {
+        return fetch('/login/public-key', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
           },
           body: JSON.stringify(body)
+          
         });
       })
       .then(function(response) {
