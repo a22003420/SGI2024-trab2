@@ -1,23 +1,73 @@
 <%- include('head'); -%>
-<script type="text/javascript" src="../js/base64url.js"></script>
-<script type="text/javascript" src="../js/signup.js"></script>
-<main class="main-content">
-    <section class="prompt">
-        <h1 class="signup-title">Sign up</h1>
-        <form id="signupForm" action="/signup/public-key/challenge" method="post">
-            <div class="form-group">
-                <label for="name" class="form-label">Name:</label>
-                <input id="name" name="name" type="text" class="form-input" value="<%= user && user.displayName ? user.displayName : '' %>" required>
-            </div>
-            <div class="form-group">
-                <label for="username" class="form-label">GoogleID:</label>
-                <input id="username" name="username" type="text" class="form-input" value="<%= user && user.googleId ? user.googleId : '' %>" required>
-            </div>
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <button type="submit" class="btn btn-primary">Sign up</button>
-        </form>
-        <hr class="divider">
-        <p class="help-text">Already have an account? <a href="/login" class="login-link">Sign in</a></p>
-    </section>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+  }
+
+  main {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .jumbotron {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    width: 400px;
+  }
+
+  h2 {
+    color: #007bff;
+  }
+
+  label {
+    font-weight: bold;
+  }
+
+  .form-control {
+    margin-bottom: 15px;
+  }
+
+  .btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+  }
+
+  .btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+  }
+</style>
+
+<main>
+  <div class="jumbotron">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 style="color: #007bff;">SignUp Form</h2> 
+    </div>
+
+    <form action="#" method="post" class="js-signup_form">
+      
+
+
+      <div class="form-group">
+        <label for="email">Your e-mail</label>
+        <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" required>
+      </div>
+
+      <div class="form-group">
+        <label for="displayName">Your Name</label>
+        <input type="text" class="form-control" id="displayName" name="displayName" value="<%= user.displayName %>" required>
+      </div>
+
+      <button type="submit" role="button" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
 </main>
+
 <%- include('foot'); -%>

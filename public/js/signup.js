@@ -1,32 +1,40 @@
-window.addEventListener('DOMContentLoaded', function() {
-  
-  document.querySelector('form').addEventListener('submit', function(event) {
+// window.addEventListener('load', function() { // not working with this
+
+//   document.querySelector('.signup-form').addEventListener('submit', function(event) {
+//   const signUpForm = document.querySelector('.js-signup_form');
+
+//   if (!signUpForm) { return; }
+
+
+window.addEventListener('load', function() {
+  const signUpForm = document.querySelector('.js-signup_form');
+
+  if (!signUpForm) { return; }
+
+  signUpForm.addEventListener('submit', function(event) {
     if (!window.PublicKeyCredential) { return; }
     
     event.preventDefault();
-    screen.orientation.lock('portrait').catch(function(error) {
-      console.log(error);
-  });
     
-    fetch('/signup/public-key/challenge', {
+    return fetch('/signup/public-key/challenge', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(Object.fromEntries(new FormData(event.target))),
+      body: JSON.stringify({
+        email: event.target.email.value,
+        displayName: event.target.displayName.value
+      }),
     })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Erro na solicitação: ' + response.status);
-      }
+    .then(function(response) {
       return response.json();
     })
-    .then(json => {
+    .then(function(json) {
       return navigator.credentials.create({
         publicKey: {
           rp: {
-            name: 'Todos'
+            name: 'test'
           },
           user: {
             id: base64url.decode(json.user.id),
@@ -35,16 +43,23 @@ window.addEventListener('DOMContentLoaded', function() {
           },
           challenge: base64url.decode(json.challenge),
           pubKeyCredParams: [
-            { type: 'public-key', alg: -7 }, // ES256
-            { type: 'public-key', alg: -257 } // RS256
+            {
+              type: 'public-key',
+              alg: -7
+            },
+            {
+              type: 'public-key',
+              alg: -257 
+            }
           ],
           authenticatorSelection: {
-            userVerification: 'preferred' // Preferência por verificação de usuário
-          }
+            residentKey: "required",
+            userVerification: 'preferred',
+          },
         }
       });
     })
-    .then(credential => {
+    .then(function(credential) {
       var body = {
         response: {
           clientDataJSON: base64url.encode(credential.response.clientDataJSON),
@@ -64,15 +79,18 @@ window.addEventListener('DOMContentLoaded', function() {
         body: JSON.stringify(body)
       });
     })
-    .then(response => {
+    .then(function(response) {
       return response.json();
     })
-    .then(json => {
-      window.location.href = json.location;
+    .then(function(json) {
+      if(json.ok) {
+        return window.location.href = json.location;
+      }
+
+      alert(json.message);
     })
-    .catch(error => {
-      console.error('Erro:', error);
+    .catch(function(error) {
+      console.log(error);
     });
   });
-  
 });

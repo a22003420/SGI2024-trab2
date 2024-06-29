@@ -5,18 +5,13 @@
   <!-- views/partials/head.ejs -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SGI@2024</title>
+  <title>Google Passport Example</title>
 
   <!-- CSS (load bootstrap from a CDN) -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  <!-- CSS (load font-awesome from a CDN) -->
-  <link rel="stylesheet" href="/css/login.css">
-  <link rel="stylesheet" href="/css/signup.css">
-  <!-- JS (load bootstrap, jquery, and popper.js from a CDN) -->
-  <script type="text/javascript" src="/js/base64url.js"></script>
-  <script type="text/javascript" src="/js/login.js"></script>
-  <script type="text/javascript" src="/js/signup.js"></script>
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> -->
+
   <!-- load fontawesome -->
   <style>
     body {
@@ -24,6 +19,10 @@
       word-wrap: break-word;
     }
   </style>
+
+  <script type="text/javascript" src="/js/base64url.js"></script>
+  <script type="text/javascript" src="/js/signup.js"></script>
+  <script type="text/javascript" src="/js/login.js"></script>
   <!-- views/partials/head.ejs -->
 </head>
 
@@ -39,19 +38,29 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <div class="navbar-nav">
-        <a class="nav-item nav-link" href="/">Home <span class="sr-only">(current)</span></a>
         <a class="nav-item nav-link" href="/login">Login</a>
         <a class="nav-item nav-link" href="/status">Status</a>
-        <a class="nav-item nav-link" href="/resource">Resource</a>
-        <a class="nav-item nav-link" href="/items">Items</a>
-        <a class="nav-item nav-link" href="/items/create">Create Items</a>
-        <a class="nav-item nav-link" href="/signup">Register PassKey</a>
-        <a class="nav-item nav-link" href="/logout">Logout</a>
+        <% if (user) { %>
+          <a class="nav-item nav-link" href="/signup">Signup Form</a>
+          <a class="nav-item nav-link" href="/resource">Resource</a>
+          <a class="nav-item nav-link" href="/">Items</a>
+          <a class="nav-item nav-link" href="/">Create Items</a>
+          <a class="nav-item nav-link" href="/">Edit Items</a>
+          <a class="nav-item nav-link" href="/logout">Logout</a>
+         <% } %>
+    
+          <% if (!user) { %>
+            <a class="nav-item nav-link" href="/">Home</a>
+            
+           <% } %>
+  
+
       </div>
     </div>
   </nav>
-  <!-- views/partials/header.ejs -->
 </header>
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
   integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"

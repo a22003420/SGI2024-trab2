@@ -5,14 +5,17 @@
         Authentication Status</p>
       <hr class="my-4">
       <% if (status.isAuthenticated()) { %>
-        <p> User <%= status.user.displayName %> is authenticated</p>
-        <p> Session expires at <%= status.user.expiryDate%>
+        <p> <%= status.user.displayName %> is authenticated!!!</p>
+        <p> Time Session: <%= status.user.expiryDate%>
         </p>
-        <p> Access Token: <%= status.user.accessToken%>
+        <p> Token: <%= status.user.accessToken%>
         </p>
         <% } else { %>
-          <p> User is NOT authenticated </p>
-          <a class="btn btn-primary" href="/login" role="button"><span class="fa fa-google"></span> Login</a>
+          <p> You are NOT authenticated!!</p>
+          
+            <a class="btn btn-primary" href="/login" role="button"><span class="fa fa-google"></span> Login with Google</a>
+            <a id="siw-public-key" class="btn btn-secondary" href="/login" role="button"><span class="fa fa-key"></span> WebAuthn Authentication</a>
+         
           <% } %>
     </div>
   </main>

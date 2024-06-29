@@ -1,15 +1,84 @@
 <%- include('head'); -%>
+    <main>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #f8f9fa;
+                margin: 0;
+                padding: 0;
+            }
 
-<main>
-    <div class="jumbotron">
-        <p class="lead">Access your Profile</p>
-        <hr class="my-4">
-        <p>Current Date: <%= date_tag %></p>
-        <p><%= message_tag %></p>
-        <div>
-            <a class="btn btn-primary" href="/login" role="button"><span class="fa fa-google"></span> Login with Google</a>
-            <a class="btn btn-secondary" href="/login" role="button"><span class="fa fa-key"></span> WebAuthn Authentication</a>
-        </div>
-    </div>
-</main>
-<%- include('foot'); -%>
+            main {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+
+            .jumbotron {
+                background-color: #fff;
+                padding: 2rem;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                text-align: center;
+            }
+
+            .jumbotron .lead {
+                font-size: 1.5rem;
+                font-weight: bold;
+                color: #333;
+            }
+
+            .jumbotron p {
+                margin: 1rem 0;
+                color: #555;
+            }
+
+            .jumbotron .btn {
+                margin: 0.5rem;
+                padding: 0.75rem 1.5rem;
+                font-size: 1rem;
+                border: none;
+                border-radius: 5px;
+                text-decoration: none;
+                display: inline-block;
+            }
+
+            .btn-primary {
+                background-color: #007bff;
+                color: #fff;
+            }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+            }
+
+            .btn-secondary {
+                background-color: #6c757d;
+                color: #fff;
+            }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+            }
+        </style>
+
+        <div class="jumbotron">
+            <p class="lead"><i class="fa fa-user" aria-hidden="true"></i>
+                Welcome to Our Service</p>
+
+            <hr class="my-4">
+            <p>Current Date: <%= date_tag %>
+            </p>
+            <p>
+                <%= message_tag %>
+            </p>
+            <div>
+                <p> Please log in to access exclusive content.</p>
+                <a class="btn btn-primary" href="/login" role="button"><span class="fa fa-google"></span> Login
+                    with Google</a>
+                <a class="btn btn-secondary" id="siw-public-key" class="btn btn-secondary" href="/login"
+                    role="button"><span class="fa fa-key"></span> WebAuthn Authentication</a>
+            </div>
+    </main>
+    <%- include('foot'); -%>

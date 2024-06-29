@@ -1,0 +1,70 @@
+{
+  "data": {
+    "config": [],
+    "authenticator": []
+  },
+  "schema": {
+    "config": {
+      "lastMdsUpdate": {
+        "type": "datetime"
+      },
+      "nextMdsUpdate": {
+        "type": "date"
+      },
+      "serialNo": {
+        "type": "integer"
+      },
+      "id": {
+        "type": "integer",
+        "autoIncrement": true,
+        "primaryKey": true,
+        "unique": true
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    },
+    "authenticator": {
+      "id": {
+        "type": "string"
+      },
+      "aaid": {
+        "type": "string"
+      },
+      "aaguid": {
+        "type": "string"
+      },
+      "attestationCertificateKeyIdentifiers": {
+        "type": "array"
+      },
+      "hash": {
+        "type": "string"
+      },
+      "url": {
+        "type": "string"
+      },
+      "timeOfLastStatusChange": {
+        "type": "date"
+      },
+      "statusReports": {
+        "type": "json"
+      },
+      "metadata": {
+        "type": "json"
+      },
+      "createdAt": {
+        "type": "datetime"
+      },
+      "updatedAt": {
+        "type": "datetime"
+      }
+    }
+  },
+  "counters": {
+    "config": {},
+    "authenticator": {}
+  }
+}

@@ -10,7 +10,7 @@ function createServer(app) {
         app.enable("trust proxy");
         // In production use HTTP
         const http = require('http');
-        const http_server = http.createServer(app).listen(port, '0.0.0.0', () => {
+        const http_server = http.createServer(app).listen(port, () => {
             console.log('HTTP server listening on: ', http_server.address());
         });
     } else {
@@ -20,8 +20,9 @@ function createServer(app) {
             fs = require("fs"),
             server = process.env.SERVER;
         /*  Certificate and key files */
-        const keyname = "./certs/" + server + "-key.pem",
-            certname = "./certs/" + server + ".pem";
+        let test="PT-L164290"
+        const keyname = "./certs/" + test + "-key.pem",
+            certname = "./certs/" + test + ".pem";
 
         console.log("Using cert:", certname, "key:", keyname);
         console.log();
@@ -30,15 +31,10 @@ function createServer(app) {
             key: fs.readFileSync(keyname),
             cert: fs.readFileSync(certname)
         };
-        const https_server = https.createServer(certs, app).listen(port, '0.0.0.0', () => {
+        const https_server = https.createServer(certs, app).listen(port, () => {
             console.log('HTTPS server listening on: ', https_server.address());
         });
     }
 }
 
 module.exports = { createServer }
-// module.exports = {
-//     port,
-//     https,
-//     certs
-// }

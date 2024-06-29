@@ -1,3 +1,10 @@
+// window.addEventListener('load', function() { not working in this way with this code from Todos
+
+//   document.getElementById('siw-public-key').addEventListener('click', function(event) {
+//   const touchIdButton = document.getElementById('siw-public-key');
+
+//   if (!touchIdButton) { return; }
+
 window.addEventListener('load', function() {
   const touchIdButton = document.getElementById('siw-public-key');
 
@@ -54,71 +61,14 @@ window.addEventListener('load', function() {
       return response.json();
     })
     .then(function(json) {
-      window.location.href = json.location;
+      if (json.ok) {
+        return window.location.href = json.location;
+      }
+
+      alert(json.message);
     })
     .catch(function(error) {
       console.log(error);
     });
   });
-  
-  if (window.PublicKeyCredential && PublicKeyCredential.isConditionalMediationAvailable) {
-    PublicKeyCredential.isConditionalMediationAvailable()
-    .then(function(available) {
-      if (!available) { return; }
-      
-      document.getElementById('siw-public-key').remove();
-      
-      return fetch('/login/public-key/challenge', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json'
-        }
-      })
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(json) {
-        return navigator.credentials.get({
-          mediation: 'conditional',
-          publicKey: {
-            challenge: base64url.decode(json.challenge)
-          }
-        });
-      })
-      .then(function(credential) {
-        var body = {
-          id: credential.id,
-          response: {
-            clientDataJSON: base64url.encode(credential.response.clientDataJSON),
-            authenticatorData: base64url.encode(credential.response.authenticatorData),
-            signature: base64url.encode(credential.response.signature),
-            userHandle: credential.response.userHandle ? base64url.encode(credential.response.userHandle) : null
-          }
-        };
-        if (credential.authenticatorAttachment) {
-          body.authenticatorAttachment = credential.authenticatorAttachment;
-        }
-    
-        return fetch('/login/public-key', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify(body)
-          
-        });
-      })
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(json) {
-        window.location.href = json.location;
-      });
-    })
-    .catch(function(error) {
-      console.log(error);
-    });
-  }
-  
 });

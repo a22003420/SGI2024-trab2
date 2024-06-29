@@ -5,8 +5,9 @@
  * and then redirects to `/login`.
  *
  */
-module.exports = {
-    isAuth: (req, res, next) => {
+// functions middleware.js 
+module.exports = { 
+    isAuth: (req, res, next) => { // Middleware to check if user is authenticated
         if (req.isAuthenticated()) {
             next();
         } else {
@@ -14,5 +15,11 @@ module.exports = {
             res.redirect('/login');
         }
     },
-   
+    isNotAuth: (req, res, next) => { // Middleware to check if user is not authenticated
+        if (!req.isAuthenticated()) {
+            next();
+        } else {
+            res.redirect('/success');
+        }
+    }
 };

@@ -11,17 +11,10 @@
       </p>
       <p>Name: <%= user.displayName %>
       </p>
-      <p>Email Address: <%= user.email %>
+      <p>Email: <%= user.email %>
       </p>
-      <% if (!user.passKeyId) { %>
-        <div class="mt-5">
-          <p>
-            Register your passkey using the link below:
-          </p>
-          <p>
-            <a class="btn btn-primary" href="/signup" role="button">Sign Up</a>
-          </p>
-        </div>
+      <% if (!user.handle) { %>
+        
       <% } %>
     </div>
   </main>
